@@ -1,0 +1,7 @@
+ResourceQuota:
+
+Aplica politicas a nivel de namespace en vez de objetos.
+
+Se diferencia de LR ya que este le da politicas a nivel de pod y él se las da directamente a nivel de namespace.
+
+Tambien permite controlar la cantidad de objetos que se pueden crear en un ns

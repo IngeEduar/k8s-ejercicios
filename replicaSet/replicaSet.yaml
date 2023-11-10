@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs-backend
+  labels:
+    app: rs-backend
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      tier: backend
+  template:
+    metadata:
+      labels:
+        tier: backend
+    spec:
+      containers:
+        - name: python-backend
+          image: python:3.6-alpine
+          command: ["sh", "-c", "echo 'Backend python' > index.html && python -m http.server 8080"]

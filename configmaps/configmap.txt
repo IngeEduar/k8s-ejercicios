@@ -1,0 +1,13 @@
+Configmap es un objeto que sirve para separar las configuraciones de un pod, el pod consume el configmap
+
+Este archvio es de clave valor
+
+Un configmap se puede crear desde un archivo o un manifiesto
+
+El POD puede ver el configmap mediante:
+	
+	- variables de entorno
+	- Mediante archivos (volumenes)
+
+Para crear desde la terminar se hace con:
+	kubectl create congimap (cm) <nombre> --from-file=<ruta>

@@ -1,0 +1,11 @@
+LimitRange: permite controlar limites a nivel de objetos.
+
+Funcionalidades:
+ - Valor predeterminado para un POD/objeto
+ - Se puede elegir un minimo y un máximo de recursos en un objeto (pod)
+ - Controla las configuraciones y da politicas de limites a nivel de objetos
+
+Ver los limits ranges:
+	kubectl get limits
+descrbir el limit range:
+	kubectl describe limits <name>

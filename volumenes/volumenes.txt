@@ -1,0 +1,30 @@
+El volumen es un objeto que es consumido en su data por un pod
+
+La aplicaiones con volumenes se diven que son con estado
+
+Volumenes Empty dir:
+
+	Directorio vacío de un pod que existe mientras el pod exista
+
+Volumenes hostPath:
+
+	Directorio dentro del nodo que vive mientras el nodo viva y está intimamente ligado al nodo (usado en desarrollo)
+
+Volumenes cloud:
+
+	Es un volumen creado en la nube, es complicado debido a que hay que agregar metadata del cloud
+
+PVC y PV: 
+
+	pv: presisten volumen (Volumen persistente)
+
+		Encargado de crear el recurso el cloud
+
+	pvc: persisten volumen claim (Reclamación de volumen persistente)
+
+		Un pvc es el encargado de reclamar un pv
+	
+	Al eliminar un pv se puede
+		retener: no se pued eusar el pv en un nuevo pvc pero persiste la info
+		reciclar: el pv puede ser reclamado por otro pvc pero se pierde la info
+		delete: Elimina el pv junto con el pvc y con ellos, la información

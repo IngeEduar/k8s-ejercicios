@@ -1,0 +1,30 @@
+#Info del deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kubernetes.io/change-cause: "Creación del deployment"
+  name: nginx-deployment
+  labels:
+    app: proxy
+#Info del Replicaset
+spec:
+#  revisionHistoryLimit: 2 (Cantidad de RS guardados para volver en un rollback)
+#  strategy:
+#    rollingUpdate:            Se usa para el cambio en los pods al actualizar
+#      maxUnavailable: 1
+#      maxSurge: 1
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-proxy
+    #Info del pod
+  template:
+    metadata:
+      labels:
+        app: nginx-proxy
+    spec:
+       #Info de los contenedores del pod
+      containers:
+        - name: nginx-container
+          image: nginx:1.7.9

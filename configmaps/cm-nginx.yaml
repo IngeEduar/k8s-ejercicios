@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-configmap
+  labels:
+    app: proxy
+data:
+  nginx: |
+    server {
+      listen 80;
+      server_name localhost;
+
+      location / {
+        root /usr/share/nginx/html;
+        index index.html index.html;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: proxy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-proxy
+  template:
+    metadata:
+      labels:
+        app: nginx-proxy
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:alpine
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/nginx/conf.d/
+      volumes:
+        - name: config-volume
+          configMap:
+            name: nginx-configmap
+            items:
+              - key: nginx
+                path: default.conf

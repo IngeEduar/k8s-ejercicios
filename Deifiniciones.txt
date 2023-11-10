@@ -1,0 +1,191 @@
+K8S: Acortación de Kubernetes
+K8s es un orquestador que se encarga del correcto funcionamiento y administración de los contenedores de un runtime (Docker)
+
+Service discovery: Descubrir contenedores para unir dos contenedores sin importar la cantidad de replicas que tengan.
+
+Rollouts and Rollbacks: Actualizaciones sin downtime
+
+Optimización de recursos en los nodos: Escaneo de las máquinas para balancear los recursos automaticamente
+
+self-healing: Se encarga de levantar los contenedores de que fallecen, siempre se encarga que el estado del deployment sea el estado en el closter.
+
+Configuración de secretos.
+
+Escalamiento horizontal.
+
+Implementación = aplicación
+Pod: 1 o más contenedores (Instancia)
+Servicios: Son puertos expuesto al mundo exterior y los mapea a un puerto de un pod dado
+
+
+En el nodo master esta el:
+	API-server (Componente importante):
+		Comunicación con kubernetes por medio del api, es el que decide en qué nodo poner los contenedores con Kubectl, Esta api tambien recibe JSON, la herramienta envia el llamado el api, el api lo procesa y lo ejecuta en kubernetes, le da ordenes a:
+
+		Scheduler: Encargado de encontrar el nodo mejor calificado para correr el contenedor, Encargado de programar un nuevo pod o carga de trabajo en un nodo.
+
+		Kube-controller: tiene el 
+			node-controller(Encargado de gestionar la vida de los contenedores).
+			Replic-controller (Encargado de gestionar las replicas de los conteendores).
+			Endpoint-controller: Encaragdo de los servicios y el mapeo con los pods
+			Service-acount y Token-controller: Encargados de la autenticación cuando se hagan llamados al API
+
+		ETCD: Alamacen de datos diseñado en un espacio clave-valor que garantiza la consistencia de los datos suando el algoritmo conseso Raft. Los datos almacenado se replican de manera segura en todos los nodos del clúster, recibe solicitudes HTTP/JSON. En kubernetes es usado para almacenar información sobre el clúster como el estaod de los pods, configuración, etc y garantiza la coherencia ene l clúster. Es donde se guarda la información para hacer los rollbacks.
+
+
+En los nodos está: 
+
+	Agente K8S (Kubelet): Corre en los nodos y recibe ordenes desde el master (Encargado de recibir las ordenes y hacer que están se ejecuten como se espere dentro del nodo con el runtime elegido (Docker)) y envía información (Estadisticas y salud de los nodos) al mismo.
+
+	Kube-proxy: Corre en cada nodo y es un servicio encargado de la red de los contendores (pods)
+
+	Container runtime (Docker o servicio de contenedores)
+
+	Pod es básicamente un contenedor pero no un contenedor, ya que en un pod pueden haber varios conteendores.
+
+Minikube:
+
+	Crea un closter muy pequeño de manera local, solo deja crear un clúster y un nodo
+
+	Crear el clúster: sudo minikube start
+
+	Ver los pods: sudo kubectl get pods
+
+	Ver el estado: minikube status
+
+	Frenar el proceso: sudo minekube stop
+
+	Eliminar el clúster: sudo minikube delete
+
+	Creación de un POD: sudo kubectl run --generator=(tipo)run-pod/v1 <nombre del pod> --image <imagen> --port <puerto>:<puerto>
+
+	Decripciión de un pod: sudo kubectl describe pod <nombre del pod> (Ver los eventos)
+
+	Eliminar un pod: sudo kubectl delete pod <nombre(s) del pod(s)>
+
+	Datos de un pod: sudo kubectl get pod <nombre del pod>
+
+	Obtener el yaml de un pod: sudo kubectl get pod <nombre> -o yaml
+
+	Ingresar a la consola de un pod: sudo kubectl exec -ti <nombre> -c <contendor> -- sh <tipo de shell>
+
+	Obtener los logs de un pod : sudo kubectl logs <nombre del pod>
+
+	Versiones disponibles para la api: sudo kubectl api-versions
+
+	Ver logs de un contendor en un pod de varios contenedores: kubectl logs <name pod> -c <name contenedor>
+
+	Ver los comandos de api-resources: sudo kubectl api-resources
+
+
+Pod: Compartir namespace entre contenedores, un pod es un contenedor para configurar otros contenedores (se levanta un contenedor temporal que se elimina al terminar de configurar), es uno o más contendores que comparten naespaces (RED (Todo el pod tiene la misma ip), IPC (Inter process comunication, los procesos se pueden ver entre contenedores), UTS (Hostname)). Unidad más minima de k8s
+
+Deployment: Objeto de kubernetes usado para administrar la implementación y escalado de aplicacioens en un clúster de un contenedor, su principal objetivo es administrar un conjunto específico de replicas y permite realizar actualizaciones y roolbacks en corto plazo.
+
+job: Usado para ejecutar tareas a corto plazo o trabajos que se deben completar con éxito. si la tarea falla, kubernetes la volverá a ejecutar para que tenga éxito
+
+cronjob: Permite programar tareaso trabajos de manera recurrente o momentos programados.
+
+
+Manifiestos en kubernetes (yaml):
+
+	Creación de pods mediante un yaml: sudo kubectl apply -f <ruta archvivo>.yaml
+	Eliminar los pods de un yaml: sudo kubectl delete -f <ruta archvivo>.yaml
+	Buscar contendores con los labels: kubectl get pods -l <label>=<valor>
+
+	Los pods no se pueden replicar por si mismos, no se autoreviven ni se pueden actualizar. Esto se hace con replicaSet y deployment.
+
+	Jerarquía:
+
+		Deployment: (Encargado de la actualización de versiones en los pods)
+			replicaSet: (Encargado de proporcinar y granatizar X cantidad de replicas)
+				pods: (Unidad mínima - contenedor(es))
+
+	Replicaset:
+
+		Encargado de las replicas mediante un yaml (Template) y se encarga de garantizar la vida de la cantidad minima requerida. Los pods creados en el yaml debe tener labels (App (Cuando ya exite este crea el owner reference en la metadata para tenerlos como referencia)).
+
+		Replicaset tiene un problema ya que crea una cantidad x de replicas siempre y al tenerlas creadas no admite la actualización de los pods sin tiempo de ejecución.
+
+		ReplicaSet solo se encarga de garantizar un numero x de replicas corriendo en todo momento, no de actualizaciones del pod.
+
+	Deployment:
+
+		Dueño de un replicaSet y el replicaset es dueño de los pods.
+
+		Se encarga de actualizar los pods mediante el replicaset mediante un margen de disponibilidad y de expandibilidad, esto es el porcentaje de pods que deben estar disponibles - agregados en el nuevo ReplicaSet, para la actualización loq ue este hace es crear un nuevo Pod (Depende el porcentaje) dentro de otro replicaset y mata el otro del anterior replicaSet hasta que estén totalmente completados.
+
+		El deployment al hacer una actualización no elimina el ReplicaSet, ya que este almacena hasta 10 replicaSet para poder hacer Rollback, este solo deja el deplyment sin ningun pod.
+
+		Obtener los deployments: kubectl get deployments
+		Ver los labels: --show-labels
+		Ver el estado del deployment: kubectl rollout status deployment <name>
+
+		Para hacer las actualizaciones se hace con el mismo comando de iniciar del apply y él se encarga de las actualizaciones
+
+		Decribir el deployment: kubectl describe deployments.app <name>
+
+		Ver los rollouts de un deployment:
+			kubectl rollout history deployment <name>
+
+		Añadir el CHANGE-CAUSE:
+			Podemos añadir el comando así:
+				kubectl apply -f file.yaml --record
+			O añadirlo en la metadata del yaml
+
+		Ver los cambios de una rollout:
+			kubectl rollout history deployment <name> --revision=<num revision>
+
+		Rollback:
+
+			kubectl rollout undo deployment <name> --to-revision=<num version>	
+		
+Los PODS no se crean planos, siempre los crean objetos de nivel mayor (ReplicaSet Deployment)
+
+Mapear un puerto de un pod temporalmente:
+	Kubectl port-forward <pod> <p host>:<p pod>
+
+
+Servicios:
+
+	Toma los pods mediante un label, este entrega una IP del servicio y al hacer una petición es quien se encarga de hacer la petición al pod. Es un intermediario entre los pods y el usuario.
+
+	Los servicios crea un objeto llamado endpoint, lo que hace es colocar la ip de los pods para poder consultar a ellos al llamar un servicio
+
+	Ver los servicios:
+		kubectl get svc (-l <label>=<valor>)
+	Describir un servicio:
+		kubectl describe svc <name>
+	Ver endpoints de un servicio:
+		kubectl describe endpoints <name service>
+
+Ver ip de los pods:
+	kubectl get pods -o wide
+
+Cluste-ip: IP virtual usada dentro del clúster, no se puede exponer el servicio.
+
+Lo servicios con NodePort exponen el un perto para ingresar desde una IP fuer del clúster
+
+Los servicios de tipo LoadBalancer se usan en instancias en la nube para el balanceo de carga
+
+
+jerarquía:
+
+	-loadbalancer
+		-nodeport
+			-clusterIp
+Si se crea uno, internamente se crean los hijos
+
+
+Obtener la ip del nodo para acceder: kubectl get nodes -o wide
+Subir una imagen al clúste: minikube image load <imagen>
+
+
+-- Secretos, configmap, volumenes, empty dir, serviceAcount - roles,  kustomize, helm(Instalación de dependencias) (Documentación)
+
+-- namespace para clúster
+
+-- Configuracón de los clúster con kubectl config (Info necesaria paa conectarse a un clúster)
+
+Generadores, transformadores para kustomize
+Resources (Archivos para compilar)

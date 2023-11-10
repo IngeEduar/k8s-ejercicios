@@ -1,0 +1,3 @@
+permite definir una serie de permisos para usuarios o grupos
+
+Diferecnias entre Roles y ClústerRoles

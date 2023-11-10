@@ -1,0 +1,6 @@
+apiVersion: networking.example.com/v1
+kind: CustomNetwork
+metadata:
+  name: my-custom-network
+spec:
+  subnet: 10.1.0.0/16

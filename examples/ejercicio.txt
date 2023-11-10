@@ -1,0 +1,21 @@
+El objetivo de este ejercicio es desplegar una aplicación web que utiliza una base de datos MySQL en un clúster de Kubernetes. Debes crear los siguientes recursos:
+
+Un Deployment llamado webapp que utiliza la imagen webapp:v1 y tiene 3 réplicas. Esta aplicación web utiliza una conexión a la base de datos MySQL.
+
+Un Service llamado webapp-service que expone el puerto 80 de las réplicas del Deployment.
+
+Un Deployment llamado mysql-db que utiliza la imagen oficial de MySQL y tiene una réplica.
+
+Un Service llamado mysql-service que expone el puerto 3306 de la réplica del Deployment MySQL.
+
+Crea un ConfigMap llamado webapp-config que contiene la configuración de la aplicación web, incluyendo información de conexión a la base de datos (por ejemplo, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, etc.).
+
+Crea un Secret llamado mysql-secret que almacena las credenciales seguras para la base de datos MySQL, como la contraseña en base64.
+
+Define un PersistentVolumeClaim (PVC) llamado mysql-pvc para el almacenamiento de la base de datos MySQL.
+
+Conecta el PVC al Deployment de MySQL para que los datos de la base de datos sean persistentes.
+
+Asegúrate de que las sondas de preparación (readinessProbe) y de inicio (livenessProbe) estén configuradas adecuadamente en ambos Deployments (webapp y mysql-db).
+
+Crea un Namespace llamado webapp-namespace para aislar la aplicación del entorno principal.

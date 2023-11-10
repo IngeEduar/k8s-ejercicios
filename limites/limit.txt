@@ -1,0 +1,26 @@
+Los limites se dan para que un pod no pueda usar todos los recurpss de un nodo y con esto provocar que el nodo colapse al no tener recursos disponibles para los demás pods
+
+Los limites se dan de la Memoria RAM (Mb, bytes, GB) y la CPU (1 CPU = 1000 milicores (milicpus) m)
+
+Propiedades a definir:
+
+Limits: Cantidad máxima de recuros que va a alcanzar el POD (No garantizado)
+
+Request: Cantidad de recursos que el POD siempre cuenta (Garantizado y dedicado)
+
+QoS: (quality of services)
+	Propiedad que se le asigna a los pods, estas son clases en las que entra un pod dependiendo la configuración de sus limites.
+	
+	Tipos:
+	
+		Guaranteed: 
+		
+			Tiene los mismos recursos en request que en limit
+		
+		Burstable:
+		
+			Cuando el límite es mayor al request
+			
+		Besteffort:
+		
+			Pod que no definen limites (Son peligrosos)

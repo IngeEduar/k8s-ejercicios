@@ -1,0 +1,34 @@
+Un namespace es una separación lógica de un scope (Límite)
+
+Cuando no se especifica el namespace se le va a dar el default
+
+Para obtener objetos de un namespace se usa -n <namespace> o --name <namespace>
+
+el namespace kube-public tiene objetos publicos
+el namespace kube-system tiene objetos para el funcionamiento de k8s (Creado por el clúster)
+
+Para crear un namespace se usa:
+	En linea de comandos: kubectl create namespace <nombre>
+	
+describir un namespace: kubectl describe namespace <nombre>
+
+Cuando se usan namespaces en los servicios, para poder acceder a él y usar su DNS este se crea a partir de :
+	svcName . nsName . svc.vluster.local
+	
+Para trabajar con namespaces sin usar el -n <nombre> existen los contextos:
+
+	Para ver el contexto:
+	
+		kubectl config current-context
+		
+	Ver la configuración del cluster:
+	
+		kubectl config view
+
+	Para configurar un nuevo contexto se hace de la siguiente manera:
+	
+		kubectl config set-context <nombre contexto> --namespace=<nameNs> --cluster=<nameC (minikube)> --user=<user (minikube)>
+		
+	Cambiar de contextos:
+	
+		kubectl config use-context <nameContext>

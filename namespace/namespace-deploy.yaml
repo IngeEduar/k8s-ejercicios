@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+  labels: 
+    name: dev
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod
+  labels:
+    name: dev
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-k8s-go-dev
+  namespace: dev
+  labels:
+    app: backend-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-dev
+  template:
+    metadata:
+      labels:
+        app: backend-dev
+    spec:
+      containers:
+      - name: backend-dev
+        image: k8s-backend-go
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-k8s-go-prod
+  namespace: prod
+  labels:
+    app: backend-prod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend-prod
+  template:
+    metadata:
+      labels:
+        app: backend-prod
+    spec:
+      containers:
+      - name: backend-prod
+        image: k8s-backend-go
+        imagePullPolicy: IfNotPresent

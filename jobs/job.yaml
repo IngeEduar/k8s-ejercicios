@@ -1,0 +1,11 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ejemplo-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: contenedor-ejemplo
+        image: imagen-ejemplo
+  backoffLimit: 4

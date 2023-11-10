@@ -1,0 +1,21 @@
+Es un diagnostico que realiza kubectl sobre los contenedores de los pods definidos
+
+Establece un rango de tiempo para ir a ver el estado del contenedor y en caso de no tener respuesta ejecuta una acción
+
+Para ver el estado del contendor lo puede hacer de 3 maneras:
+
+	- por comandos: Ejecuta un comando en el contenedor, si da 0 está bien, de otra manera no.
+	
+	- por medio de TCP: Pregunta por un puerto y su funcionamiento, si el puerto no responde asume un problema, de otro modo no
+	
+	- por medio de HTTP: Hace una petición http y si está abajo de 400 el estaod lo toma como bien, de otra manera no
+
+Existen 3 tipos de Prube:
+
+	- Liveness: Diagnostico para ver si la aplicación funciona como debería (Prueba que ejecuta prube en el contenedor cada cierto tiempo, solo se espera una respuesta del contenedor).
+	
+	- Readiness: Para ver si la aplicación ya arrancó como debería (Diagnostico que se ejecuta en el pod antes de exponer el pod como endpoint del servicio).
+	
+	- Start tup: Aplicaciones demorada en iniciar. (Los demás probes no se ejecutan hasta que no termine este, este se asegura que se espere la configuración/inicialización de la aplicación en el servicio)
+	
+
